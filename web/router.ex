@@ -22,13 +22,12 @@ defmodule Home.Router do
   scope "/api/v1", Home.API.V1 do
     pipe_through :api
 
-    resources "/lamps", LampController, only: [:index, :show, :update]
+    scope "/scenes/:scene_id" do
+      post "/activate", SceneController, :activate
+    end
 
-    resources "/rooms", RoomController,
-      [only: [:index, :show], param: "room_id"]
-
-    scope "/rooms/:room_id" do
-      post "/command/:command", RoomController, :command
+    scope "/devices/:device_id" do
+      post "/command/:command", DeviceController, :command
     end
   end
 end

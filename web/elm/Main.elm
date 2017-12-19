@@ -40,8 +40,7 @@ init =
 
 
 type Msg
-    = LampsOn
-    | LampsOff
+    = SendCommand String
     | PostResult (Result Http.Error String)
     | NavbarMsg Navbar.State
     | AccordionMsg Accordion.State
@@ -51,7 +50,7 @@ sendCommand : String -> Cmd Msg
 sendCommand cmd =
     let
         url =
-            "api/v1/rooms/livingroom/command/" ++ cmd
+            "api/v1/" ++ cmd
 
         request =
             Http.post url Http.emptyBody (Json.Decode.succeed "")
@@ -62,11 +61,8 @@ sendCommand cmd =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        LampsOn ->
-            ( model, sendCommand "lamps_on" )
-
-        LampsOff ->
-            ( model, sendCommand "lamps_off" )
+        SendCommand command ->
+            ( model, sendCommand command )
 
         PostResult _ ->
             ( model, Cmd.none )
@@ -104,11 +100,20 @@ livingRoomPage : Model -> Html Msg
 livingRoomPage model =
     div []
         [ Button.button
-            [ Button.primary, Button.onClick LampsOn ]
-            [ text "Lamps On" ]
+            [ Button.primary
+            , Button.onClick (SendCommand "scenes/LightScene_10/activate")
+            ]
+            [ text "All Lamps On" ]
         , Button.button
-            [ Button.primary, Button.onClick LampsOff ]
-            [ text "Lamps Off" ]
+            [ Button.primary
+            , Button.onClick (SendCommand "scenes/LightScene_11/activate")
+            ]
+            [ text "All Lamps Off" ]
+        , Button.button
+            [ Button.primary
+            , Button.onClick (SendCommand "scenes/LightScene_12/activate")
+            ]
+            [ text "Main Lamp On" ]
         ]
 
 
